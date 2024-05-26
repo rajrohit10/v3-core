@@ -1,68 +1,87 @@
-import 'hardhat-typechain'
-import '@nomiclabs/hardhat-ethers'
-import '@nomiclabs/hardhat-waffle'
-import '@nomiclabs/hardhat-etherscan'
+import * as dotenv from "dotenv";
+import "@nomicfoundation/hardhat-toolbox";
+import "hardhat-contract-sizer";
+import "@nomicfoundation/hardhat-foundry";
+// import "@matterlabs/hardhat-zksync-deploy";
+// import "@matterlabs/hardhat-zksync-solc";
+// import "@matterlabs/hardhat-zksync-verify";
 
-export default {
-  networks: {
-    hardhat: {
-      allowUnlimitedContractSize: false,
-    },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    arbitrumRinkeby: {
-      url: `https://arbitrum-rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    arbitrum: {
-      url: `https://arbitrum-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    optimismKovan: {
-      url: `https://optimism-kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    optimism: {
-      url: `https://optimism-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    mumbai: {
-      url: `https://polygon-mumbai.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    polygon: {
-      url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    },
-    bnb: {
-      url: `https://bsc-dataseed.binance.org/`,
-    },
+dotenv.config();
+const settings = {
+  optimizer: {
+    enabled: true,
+    runs: 200,
   },
-  etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
-    apiKey: process.env.ETHERSCAN_API_KEY,
-  },
-  solidity: {
-    version: '0.7.6',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 800,
-      },
-      metadata: {
-        // do not include the metadata hash, since this is machine dependent
-        // and we want all generated code to be deterministic
-        // https://docs.soliditylang.org/en/v0.7.6/metadata.html
-        bytecodeHash: 'none',
-      },
+};
+
+
+
+module.exports ={
+    defaultNetwork: "zksync",
+    networks: {
+        hardhat: {
+        },
+        sepolia: {
+            url: `https://eth-sepolia.g.alchemy.com/v2/wJ4MOyRL_MQ9a3jJiFVpBGrfZf9jmVKL`,
+            accounts: [process.env.PRIVATE_KEY_DEPLOY]
+        },
+        saga: { 
+          url: `https://cosmosium-2715746271584000-1.jsonrpc.testnet.sagarpc.io`,  
+          accounts: [process.env.PRIVATE_KEY_DEPLOY]
+       },
+        zksync: {
+            url: `https://sepolia.era.zksync.dev`,
+            ethNetwork: "sepolia", 
+            zksync: true,
+            accounts: [process.env.PRIVATE_KEY_DEPLOY],
+            verifyURL: 'https://explorer.sepolia.era.zksync.dev/contract_verification'
+
+        }
     },
-  },
+    solidity: {
+      compilers: [
+        {version: '0.7.6'},
+        
+
+      ].map((o) => ({ ...o, settings })),
+    },
+    contractSizer: {
+      alphaSort: true,
+      disambiguatePaths: false,
+      runOnCompile: true,
+      strict: true,
+      only: [],
+    }
+    // zksolc: { // need to reference zksolc compiler
+    //     compilerSource: 'binary',
+    //     version: "1.3.22",
+    //     settings: {
+    //         libraries: {
+    //               "contracts/art/Trig.sol:Trig": {
+    //                 "Trig": "0xDfE367B10EBE44721ABd4698D3a600551ecBc0f7"
+    //               },
+    //               "contracts/art/PerlinNoise.sol:PerlinNoise": {
+    //                 "PerlinNoise": "0x1fb34d433CE1D007C5C9C19b021AA896F8Cb18B1"
+    //               },
+    //               "contracts/libraries/DelegationLogicLibrary.sol:DelegationLogicLibrary": {
+    //                 "DelegationLogicLibrary": "0xB14Cb52f8ff6b9A14b1FDCb1ED3c05f2eaD52029"
+    //               },
+    //               "contracts/libraries/BalanceLogicLibrary.sol:BalanceLogicLibrary": {
+    //                 "BalanceLogicLibrary": "0xB6D3049FbC7849F3f990Fbb63e8D0Cf75CEC3490"
+    //               },
+    //               "contracts/art/PerlinNoise.sol": {
+    //                 "PerlinNoise": "0xB30c4307270Dec94d254c414a2284A45255e47C0"
+    //               },
+    //               "contracts/art/Trig.sol": {
+    //                 "Trig": "0xa0c97479A27a30FC5786DCDb8b6a568AD0a9a30c"
+    //               },
+    //               "contracts/libraries/BalanceLogicLibrary.sol": {
+    //                 "BalanceLogicLibrary": "0xAc36bDE2f3e13e01371bbEfeFA313D4FE51d473c"
+    //               },
+    //               "contracts/libraries/DelegationLogicLibrary.sol": {
+    //                 "DelegationLogicLibrary": "0xb32ef5B29C7ba7297ee6e1491D0ED0eF14391a04"
+    //               }
+    //             },
+    //   },
+    // }
 }
